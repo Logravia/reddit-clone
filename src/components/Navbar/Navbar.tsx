@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
 
       <SearchBox></SearchBox>
       {/* <Directory></Directory>
-      <RightContent></RightContent> */}
+      <RightSide></RightSide> */}
     </Flex>
   );
 };
