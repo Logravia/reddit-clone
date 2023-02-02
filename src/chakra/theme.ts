@@ -10,6 +10,7 @@ const theme = extendTheme({
     body: "Open Sans, sans-serif",
   },
   // NB: Chakra gives you access to `colorMode` and `theme` in `props`, this can be just defined with an object
+  // Theme switching
   styles: {
     global: () => ({
       body: {
