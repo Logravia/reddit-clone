@@ -2,17 +2,35 @@ import { AuthModalState } from "@/atoms/authModalAtom";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useSetRecoilState } from "recoil";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/clientApp";
+import {FIREBASE_ERRORS} from '@/firebase/errors'
 
 const Signup: React.FC = () => {
   const setModalState = useSetRecoilState(AuthModalState);
-    const [inputVal, setInputVal] = useState({
-        username: "",
-        email: "",
-        password: "",
-        confirmPW:"",
-    })
+  const [inputVal, setInputVal] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPW: "",
+  });
 
-  function onSubmit() {}
+  const [passError, setPassError] = useState("");
+
+  const [createUserWithEmailAndPassword, user, loading, submitError] =
+    useCreateUserWithEmailAndPassword(auth);
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (inputVal.password !== inputVal.confirmPW) {
+      setPassError("Passwords do not match!");
+      return;
+    } else {
+      setPassError("");
+      // TODO password validation
+      createUserWithEmailAndPassword(inputVal.email, inputVal.password);
+    }
+  }
 
   function switchToLogin() {
     setModalState((prev) => ({
@@ -21,11 +39,18 @@ const Signup: React.FC = () => {
     }));
   }
 
-  function noteValue(e:React.ChangeEvent<HTMLInputElement>) {
-    setInputVal(prev=>({
-        ...prev,
-        [e.target.name]: e.target.value,
+  function noteValue(e: React.ChangeEvent<HTMLInputElement>) {
+    const name = e.target.name;
+
+    setInputVal((prev) => ({
+      ...prev,
+      [name]: e.target.value,
     }));
+
+    // reset error when pw being entered
+    if (name === "password" || name == "confirmPW") {
+      setPassError("");
+    }
   }
 
   return (
@@ -66,8 +91,14 @@ const Signup: React.FC = () => {
         value={inputVal.confirmPW}
         onChange={noteValue}
       ></Input>
-      <Button type="submit" width="100%" mb="4">
-        Login
+      {/* // TODO Extract into a component */}
+      {(passError || submitError) && (
+        <Text color={"red.500"} textAlign="center" mb="4">
+            {passError || FIREBASE_ERRORS[submitError?.message as keyof typeof FIREBASE_ERRORS]}
+        </Text>
+      )}
+      <Button type="submit" width="100%" mb="4" isLoading={loading}>
+        Sign Up!
       </Button>
       <Flex fontSize="9pt" justifyContent="center">
         <Text mr={2}>Been here before?</Text>
