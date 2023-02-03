@@ -8,11 +8,9 @@ const SearchBox: React.FC<SearchBoxProps> = () => {
   return (
     <Flex align="center" flexGrow={1} mr={2}>
       <InputGroup>
-        <InputLeftElement
-          pointerEvents="none"
-          children={<SearchIcon color="gray.400" />}
-          height={"30px"}
-        />
+        <InputLeftElement pointerEvents="none" height={"30px"}>
+          <SearchIcon color="gray.400" />
+        </InputLeftElement>
         <Input
           type="text"
           placeholder="Search"
