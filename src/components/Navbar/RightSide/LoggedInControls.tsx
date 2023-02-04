@@ -1,13 +1,19 @@
 import { auth } from "@/firebase/clientApp";
-import { Button } from "@chakra-ui/react";
-import { signOut } from "firebase/auth";
+import { Button, Flex } from "@chakra-ui/react";
+import { signOut, User } from "firebase/auth";
 import React from "react";
+import Icons from "../Icons";
+import UserMenu from "./UserMenu";
 
-type LoggedInControlsProps = {};
+type LoggedInControlsProps = {
+  user: User | null | undefined;
+};
 
-const LoggedInControls: React.FC<LoggedInControlsProps> = () => {
+const LoggedInControls: React.FC<LoggedInControlsProps> = ({user}) => {
   return (
-    <Button onClick={()=>{signOut(auth)}}>Log out</Button>
-  )
+    <Flex align={"center"}>
+      <Icons />
+    </Flex>
+  );
 };
 export default LoggedInControls;
