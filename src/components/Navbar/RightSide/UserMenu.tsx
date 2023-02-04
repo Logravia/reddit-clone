@@ -1,24 +1,48 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
-import { User } from "firebase/auth";
+import { FaRedditSquare } from "react-icons/fa";
+import {FiLogOut} from "react-icons/fi"
+import { VscAccount } from "react-icons/vsc";
+
+import {
+  Flex,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Text,
+} from "@chakra-ui/react";
+import { signOut, User } from "firebase/auth";
 import React from "react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { CgProfile } from "react-icons/cg";
+import { auth } from "@/firebase/clientApp";
+import LoggedInMenuItems from "./LoggedInMenuItems";
+import LoggedOutMenuItems from "./LoggedOutMenuItems";
 
 type UserMenuProps = {
-    user: User | null | undefined
+  user: User | null | undefined;
 };
 
-const UserMenu: React.FC<UserMenuProps> = () => {
+const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-        Actions
+      <MenuButton >
+        <Flex align="center" ml="3">
+          <Flex align="center" >
+            <>
+              {user ? (
+                <Icon as={FaRedditSquare} fontSize={"18pt"} color="gray.400" />
+              ) : (
+                <Icon as={VscAccount} fontSize={"18pt"} color="gray.400" />
+              )}
+            </>
+            <ChevronDownIcon></ChevronDownIcon>
+          </Flex>
+        </Flex>
       </MenuButton>
       <MenuList>
-        <MenuItem>Download</MenuItem>
-        <MenuItem>Create a Copy</MenuItem>
-        <MenuItem>Mark as Draft</MenuItem>
-        <MenuItem>Delete</MenuItem>
-        <MenuItem>Attend a Workshop</MenuItem>
+        {user ? <LoggedInMenuItems/> : <LoggedOutMenuItems/>}
       </MenuList>
     </Menu>
   );
