@@ -19,7 +19,7 @@ const RightSide: React.FC<RightSideProps> = ({ user }) => {
       <Flex justify={"center"} align={"center"} gap="2px">
         {user ? <Icons/> : <AuthButtons />}
         <UserMenu user={user} />
-        <UserData user={user}/>
+        {user && <UserData user={user}/>}
       </Flex>
     </>
   );
