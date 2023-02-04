@@ -27,6 +27,13 @@ const Login: React.FC<LoginProps> = () => {
     }));
   }
 
+  function switchToResetPW() {
+    setModalState((prev) => ({
+      ...prev,
+      view: "resetPassword",
+    }));
+  }
+
   return (
     <form onSubmit={onSubmit}>
       <Input
@@ -56,7 +63,16 @@ const Login: React.FC<LoginProps> = () => {
       <Button type="submit" width="100%" mb="4" isLoading={loading}>
         Login
       </Button>
-      <Flex fontSize="9pt" justifyContent="center">
+      <Flex fontSize="9pt" justifyContent="center" direction={"column"}>
+        <Text mr={1}>Forgot your password?</Text>
+        <Text
+          color={"blue.500"}
+          fontWeight={700}
+          cursor="pointer"
+          onClick={switchToResetPW}
+        >
+          Click here!
+        </Text>
         <Text mr={1}>New here?</Text>
         <Text
           color={"blue.500"}
