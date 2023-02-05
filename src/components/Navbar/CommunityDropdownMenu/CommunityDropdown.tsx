@@ -1,4 +1,4 @@
-import CommunityCreation from "@/components/Modal/CommunityCreation/CommunityCreation";
+import CommunityCreationModal from "@/components/Modal/CommunityCreation/CommunityCreationModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Flex,
@@ -6,16 +6,19 @@ import {
   MenuButton, MenuItem, MenuList,
   Text
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState,  } from "react";
 import { GrAdd } from "react-icons/gr";
 import { IoMdHome } from "react-icons/io";
 
 type CommunityDropdown = {};
 
 const CommunityDropdown: React.FC<CommunityDropdown> = () => {
+
+  const [open, setOpen] = useState(false)
+
   return (
     <Flex display={{ base: "none", md: "flex" }}>
-      {false && <CommunityCreation />}
+      <CommunityCreationModal open={open} setOpen={setOpen}/>
       <Menu>
         <MenuButton>
           <Flex align="center" ml="3">
@@ -27,7 +30,7 @@ const CommunityDropdown: React.FC<CommunityDropdown> = () => {
           </Flex>
         </MenuButton>
         <MenuList>
-          <MenuItem>
+          <MenuItem onClick={()=>{setOpen(true)}}>
             <Flex align="center">
               <Icon as={GrAdd} mr="2"/>
               <Text>Create community</Text>
