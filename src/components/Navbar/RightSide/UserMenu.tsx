@@ -5,6 +5,7 @@ import { VscAccount } from "react-icons/vsc";
 import {
   Flex,
   Icon,
+  IconButton,
   Menu,
   MenuButton,
   MenuDivider,
@@ -27,7 +28,7 @@ type UserMenuProps = {
 const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   return (
     <Menu>
-      <MenuButton >
+      <MenuButton>
         <Flex align="center" ml="3">
           <Flex align="center" >
             <>
