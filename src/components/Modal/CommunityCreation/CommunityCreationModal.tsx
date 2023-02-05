@@ -16,22 +16,68 @@ import {
   Input,
   Heading,
 } from "@chakra-ui/react";
-import React from "react";
-import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
+import React, { useState } from "react";
+import { BsFillEyeFill } from "react-icons/bs";
 import { MdOutlinePublic } from "react-icons/md";
 import { HiLockClosed } from "react-icons/hi";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase/clientApp";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-type CommunityCreationModalProps = {
+type CreationModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const CommunityCreationModal: React.FC<CommunityCreationModalProps> = ({
-  open,
-  setOpen,
-}) => {
+const CommunityCreationModal: React.FC<CreationModalProps> = ({ open,setOpen,}) => {
+
+  const [name, setName] = useState("")
+  const [user] = useAuthState(auth)
+  const [loading, setLoading] = useState(false)
+
   function handleClose() {
     setOpen(false);
+  }
+
+  function validName() {
+    // TODO validate names
+    return true;
+  }
+
+  function communityObj(){
+    return {
+      creatorId: user?.uid,
+      creationDate: serverTimestamp(),
+      name: name,
+      privacy: "",
+      moderators: "",
+      subscribers: 1,
+    }
+  }
+
+  async function handleCommunityCreation() {
+    setLoading(true);
+    
+    try {
+      if (!validName()) {
+        throw new Error("Invalid name");
+      }
+
+      const communityRef = doc(db, "communities", name);
+      const communityDoc = await getDoc(communityRef);
+
+      if (communityDoc.exists()) {
+        throw new Error("Community name exists");
+      }
+
+      //All check passing
+      await setDoc(communityRef, communityObj());
+    } catch (e) {
+      // TODO display error
+      console.log(e);
+    }
+
+    setLoading(false);
   }
 
   return (
@@ -51,6 +97,8 @@ const CommunityCreationModal: React.FC<CommunityCreationModalProps> = ({
             <Input
               name="name"
               size="sm"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
             <Text fontSize="9pt" pt={2}></Text>
             <Box>
@@ -93,7 +141,7 @@ const CommunityCreationModal: React.FC<CommunityCreationModalProps> = ({
             <Button variant={"outline"} mr={3} onClick={handleClose}>
               Close
             </Button>
-            <Button variant="outline">Create Community</Button>
+            <Button variant="outline" isLoading={loading} onClick={handleCommunityCreation}>Create Community</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
