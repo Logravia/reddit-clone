@@ -2,6 +2,7 @@ import { extendTheme } from "@chakra-ui/react"
 import Button from "./button";
 import Icon from "./icon";
 import MenuButton from "./menuItem";
+import Text from "./text"
 
 const theme = extendTheme({
   colors: {
@@ -22,7 +23,7 @@ const theme = extendTheme({
     }),
   },
   components: {
-    Button, Icon, MenuButton
+    Button, Icon, MenuButton, Text
   }, 
 });
 
