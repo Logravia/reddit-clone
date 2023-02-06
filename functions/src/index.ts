@@ -15,6 +15,8 @@ export const createUserDocument = functions.auth
         uid: user.uid,
         pfp: "",
         karma: 1,
+        subscribes:[],
+        moderates:[]
     }
 
     db.collection("users")
