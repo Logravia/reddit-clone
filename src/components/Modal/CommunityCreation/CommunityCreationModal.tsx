@@ -20,20 +20,30 @@ import React, { useState } from "react";
 import { BsFillEyeFill } from "react-icons/bs";
 import { MdOutlinePublic } from "react-icons/md";
 import { HiLockClosed } from "react-icons/hi";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  doc,
+  Firestore,
+  getDoc,
+  runTransaction,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import { auth, db } from "@/firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
+import UserData from "@/components/Navbar/RightSide/UserData";
 
 type CreationModalProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const CommunityCreationModal: React.FC<CreationModalProps> = ({ open,setOpen,}) => {
-
-  const [name, setName] = useState("")
-  const [user] = useAuthState(auth)
-  const [loading, setLoading] = useState(false)
+const CommunityCreationModal: React.FC<CreationModalProps> = ({
+  open,
+  setOpen,
+}) => {
+  const [name, setName] = useState("");
+  const [user] = useAuthState(auth);
+  const [loading, setLoading] = useState(false);
 
   function handleClose() {
     setOpen(false);
@@ -44,34 +54,62 @@ const CommunityCreationModal: React.FC<CreationModalProps> = ({ open,setOpen,}) 
     return true;
   }
 
-  function communityObj(){
+  function communityObj() {
     return {
       creatorId: user?.uid,
       creationDate: serverTimestamp(),
       name: name,
       privacy: "",
-      moderators: "",
+      moderators: [user?.uid],
       subscribers: 1,
-    }
+    };
+  }
+
+  function addCommunityToUser(){
+
   }
 
   async function handleCommunityCreation() {
+
     setLoading(true);
-    
+
     try {
-      if (!validName()) {
-        throw new Error("Invalid name");
-      }
+      if (!validName()) {throw new Error("Invalid name")}
+      if (!user) { throw new Error("No user");}
 
       const communityRef = doc(db, "communities", name);
-      const communityDoc = await getDoc(communityRef);
+      const userRef = doc(db, "users", user.uid);
 
-      if (communityDoc.exists()) {
-        throw new Error("Community name exists");
-      }
+      // Creating community and adding community to the user should both succeed or both fail.
+      await runTransaction(db, async (transaction) => {
+        // To forbid from making a community of the same name
+        const communityDoc = await transaction.get(communityRef);
+        if (communityDoc.exists()) {
+          throw new Error("Community name exists");
+        }
 
-      //All check passing
-      await setDoc(communityRef, communityObj());
+        const userDoc = await transaction.get(userRef);
+        if (!userDoc) {
+          throw new Error("No user data!");
+        }
+
+        let userData = userDoc.data();
+        if (!userData) {
+          throw new Error("Empty document!");
+        }
+
+        userData = {
+          ...userData,
+          subscribes: [...userData.subscribes, name],
+          moderates: [...userData.moderates, name],
+        };
+
+        // Create community
+        transaction.set(communityRef, communityObj());
+        // Set user subscription state
+        transaction.set(userRef, userData);
+      });
+
     } catch (e) {
       // TODO display error
       console.log(e);
@@ -141,7 +179,13 @@ const CommunityCreationModal: React.FC<CreationModalProps> = ({ open,setOpen,}) 
             <Button variant={"outline"} mr={3} onClick={handleClose}>
               Close
             </Button>
-            <Button variant="outline" isLoading={loading} onClick={handleCommunityCreation}>Create Community</Button>
+            <Button
+              variant="outline"
+              isLoading={loading}
+              onClick={handleCommunityCreation}
+            >
+              Create Community
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
