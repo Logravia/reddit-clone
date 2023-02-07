@@ -1,4 +1,5 @@
 import { CommunityData } from "@/atoms/communityAtom";
+import NotFound from "@/components/Community/NotFound";
 import { db } from "@/firebase/clientApp";
 import { Heading } from "@chakra-ui/react";
 import {
@@ -12,16 +13,22 @@ import React from "react";
 
 type CommunityPageProps = {
   commData: CommunityData;
+  missingPageName: string,
 };
 
-const CommunityPage: React.FC<CommunityPageProps> = ({ commData }) => {
-  return <Heading>{commData.name}</Heading>;
+const CommunityPage: React.FC<CommunityPageProps> = ({ commData, missingPageName }) => {
+  if (commData) {
+    return <Heading>Welcome to the {commData.name} community!</Heading>;
+  } else {
+    return <NotFound missingPageName={missingPageName}/>
+  }
 };
 
-// you must return a JSON-serializable object
-// no props with objects or undefined vals fror Next.js
 function pageProps(doc: DocumentSnapshot<DocumentData>) {
+  if (!doc.exists()) { return {props:{commData: "", missingPageName: doc.id}}; } // to signal when a community does not exist
   let data = doc.data() as CommunityData;
+  // you must return a JSON-serializable object
+  // no props with objects or undefined vals fror Next.js
   return {
     props: {
       commData: { ...data, creationDate: data.creationDate.nanoseconds },
