@@ -30,7 +30,6 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "@/firebase/clientApp";
 import { useAuthState } from "react-firebase-hooks/auth";
-import UserData from "@/components/Navbar/RightSide/UserData";
 
 type CreationModalProps = {
   open: boolean;
@@ -56,17 +55,16 @@ const CommunityCreationModal: React.FC<CreationModalProps> = ({
 
   function communityObj() {
     return {
+      creatorName: user?.displayName,
       creatorId: user?.uid,
       creationDate: serverTimestamp(),
       name: name,
       privacy: "",
-      moderators: [user?.uid],
+      moderators: [user?.displayName],
+      moderatorIDs: [user?.uid],
+      imgURL: "",
       subscribers: 1,
     };
-  }
-
-  function addCommunityToUser(){
-
   }
 
   async function handleCommunityCreation() {
@@ -114,8 +112,7 @@ const CommunityCreationModal: React.FC<CreationModalProps> = ({
       // TODO display error
       console.log(e);
     }
-
-    setLoading(false);
+setLoading(false);
   }
 
   return (
