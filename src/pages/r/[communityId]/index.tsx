@@ -1,6 +1,7 @@
 import { CommunityData } from "@/atoms/communityAtom";
 import Header from "@/components/Community/Header";
 import NotFound from "@/components/Community/NotFound";
+import PageBody from "@/components/Layout/PageBody";
 import { db } from "@/firebase/clientApp";
 import {
   doc,
@@ -11,10 +12,9 @@ import {
 import { GetServerSidePropsContext } from "next";
 import React from "react";
 
-
 type CommunityPageProps = {
   commData: CommunityData;
-  missingPageName: string,
+  missingPageName: string;
 };
 
 const CommunityPage: React.FC<CommunityPageProps> = ({
@@ -25,6 +25,16 @@ const CommunityPage: React.FC<CommunityPageProps> = ({
     return (
       <>
         <Header commData={commData} />
+        <PageBody>
+          {/* Page Body left side */}
+          <>
+            <div>L</div>
+          </>
+          {/* Page Body right side */}
+          <>
+            <div>R</div>
+          </>
+        </PageBody>
       </>
     );
   } else {
@@ -33,7 +43,9 @@ const CommunityPage: React.FC<CommunityPageProps> = ({
 };
 
 function pageProps(doc: DocumentSnapshot<DocumentData>) {
-  if (!doc.exists()) { return {props:{commData: "", missingPageName: doc.id}}; } // to signal when a community does not exist
+  if (!doc.exists()) {
+    return { props: { commData: "", missingPageName: doc.id } };
+  } // to signal when a community does not exist
   let data = doc.data() as CommunityData;
   // you must return a JSON-serializable object
   // no props with objects or undefined vals fror Next.js
