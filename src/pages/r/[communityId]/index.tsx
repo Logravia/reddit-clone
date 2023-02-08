@@ -1,7 +1,7 @@
 import { CommunityData } from "@/atoms/communityAtom";
+import Header from "@/components/Community/Header";
 import NotFound from "@/components/Community/NotFound";
 import { db } from "@/firebase/clientApp";
-import { Heading } from "@chakra-ui/react";
 import {
   doc,
   DocumentData,
@@ -11,16 +11,24 @@ import {
 import { GetServerSidePropsContext } from "next";
 import React from "react";
 
+
 type CommunityPageProps = {
   commData: CommunityData;
   missingPageName: string,
 };
 
-const CommunityPage: React.FC<CommunityPageProps> = ({ commData, missingPageName }) => {
+const CommunityPage: React.FC<CommunityPageProps> = ({
+  commData,
+  missingPageName,
+}) => {
   if (commData) {
-    return <Heading>Welcome to the {commData.name} community!</Heading>;
+    return (
+      <>
+        <Header commData={commData} />
+      </>
+    );
   } else {
-    return <NotFound missingPageName={missingPageName}/>
+    return <NotFound missingPageName={missingPageName} />;
   }
 };
 
