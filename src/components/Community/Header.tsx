@@ -28,8 +28,8 @@ const Header: React.FC<HeaderProps> = ({ commData }) => {
             shadow="rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px"
             mr="5"
           ></Image>
-          <Flex>
-            <Flex flexDir="column">
+          <Flex mt="3">
+            <Flex flexDir="column" mr="4">
               <Heading as="h3" size="lg" lineHeight="0.6">
                 {commData.name}
               </Heading>
@@ -37,7 +37,8 @@ const Header: React.FC<HeaderProps> = ({ commData }) => {
                 r/{commData.name}
               </Text>
             </Flex>
-            <Button>Join</Button>
+            {/* //TODO: Refactor the way button's position is calculated */}
+            <Button mr="16px" variant="solid" position="relative" top="-10%">Join</Button>
           </Flex>
         </Flex>
       </Flex>
