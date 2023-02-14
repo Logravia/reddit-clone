@@ -1,4 +1,5 @@
 import { CommunityData } from "@/atoms/communityAtom";
+import useUserData from "@/hooks/useUserData";
 import { Box, Flex, Image, Heading, Text, Button } from "@chakra-ui/react";
 import React from "react";
 
@@ -7,7 +8,8 @@ type HeaderProps = {
 };
 
 const Header: React.FC<HeaderProps> = ({ commData }) => {
-  console.log(commData);
+  const {userStateValue, joinOrLeave, hasJoined} = useUserData();
+  let joined = hasJoined(commData.name);
 
   return (
     <Flex direction="column" width="100%" height="140px">
@@ -38,7 +40,9 @@ const Header: React.FC<HeaderProps> = ({ commData }) => {
               </Text>
             </Flex>
             {/* //TODO: Refactor the way button's position is calculated */}
-            <Button mr="16px" variant="solid" position="relative" top="-10%">Join</Button>
+            <Button mr="16px" variant={joined ? "outline" : "solid"} position="relative" top="-10%" onClick={()=>{joinOrLeave(commData.name)}}>
+              {joined ? "Leave" : "Join"}
+            </Button>
           </Flex>
         </Flex>
       </Flex>
